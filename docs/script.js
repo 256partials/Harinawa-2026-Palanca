@@ -107,6 +107,8 @@ const namelist = [
     "Yu, Selene Liana M."
 ];
 
+const nomiddleinitial = [];
+
 for (let index = 0; index < cardlist.length; index++) {
 
     const element = cardlist[index];
