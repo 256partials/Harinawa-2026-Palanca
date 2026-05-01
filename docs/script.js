@@ -24,7 +24,7 @@ const initializeImageLoading = () => {
     }
 };
 
-const graduationDate = new Date('2026-05-20T023:59:59');
+const graduationDate = new Date('2026-05-20T23:59:59');
 currentDate = Date.now();
 timeTillGrad = Math.ceil((graduationDate-currentDate)/(1000 * 60 * 60 * 24));
 
