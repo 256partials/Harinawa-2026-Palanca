@@ -10,7 +10,6 @@ to_home.addEventListener("click", function() {
     window.location = "./";
 });
 
-// Add staggered animation to cards
 const cardlist = document.getElementsByClassName('card');
 Array.from(cardlist).forEach((card, index) => {
     card.style.animationDelay = `${index * 0.05}s`;
@@ -107,13 +106,6 @@ const namelist = [
     "Yap, Io Mari V.",
     "Yu, Selene Liana M."
 ];
-const nomiddleinitial = [
-    ["Larena, Arriannie Lesh", 50]
-]
-const notildenames = [
-    
-]
-
 
 for (let index = 0; index < cardlist.length; index++) {
 
@@ -130,62 +122,6 @@ for (let index = 0; index < cardlist.length; index++) {
         }, 100);
     });
 }
-
-const searchbtn = document.getElementById('search-btn');
-const searchbar = document.getElementById('search-bar');
-
-searchbar.addEventListener("keydown", function(e) {
-    if (e.key == "Enter") {
-        search();
-    }
-})
-
-function search(){
-    match = ''
-    index = 0;
-    for (index = 0; index < namelist.length; index++){
-        if (namelist[index].includes(searchbar.value.trim().toUpperCase())){
-            match = searchbar.value.trim();
-            break;
-        }
-    }
-    if (match == ''){
-        for (index = 0; index < notildenames.length; index++){
-            if (notildenames[index][0].includes(searchbar.value.trim().toUpperCase())){
-                match = searchbar.value.trim();
-                index = notildenames[index][1];
-                break;
-            }
-        }
-    }
-    index++;
-    if (match !=''){
-        document.getElementById('card' + index).scrollIntoView({
-            behavior: 'smooth',     
-            block: 'center'
-          });
-        setTimeout(() => {
-           window.scrollBy({ top: 270.5, behavior: 'smooth' }); 
-        }, 0);
-        document.getElementsByClassName('card')[index - 1].focus();
-        searchbar.value = "";
-    } else if (searchbar.value.trim() != "") {
-        alert('Not Found!');
-    }
-}
-
-searchbtn.addEventListener('click', search);
-
-const tutorial = document.getElementsByClassName('poppup')[0];
-
-tutorial.addEventListener('click', function(){
-    tutorial.style.display = 'none';
-});
-
-if (!localStorage.getItem('firstVisit')) {
-    localStorage.setItem('firstVisit', 'false');
-    tutorial.style.display = 'flex';
-} 
 
 document.addEventListener('contextmenu', function (e) {
     e.preventDefault();
