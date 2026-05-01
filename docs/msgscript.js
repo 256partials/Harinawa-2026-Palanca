@@ -9,8 +9,15 @@ const optimizeImage = (imgElement) => {
     }
 };
 
-const graduationDate = new Date('2026-05-20T23:59:59');
-currentDate = Date.now();
+// Function to get current time in GMT+08
+const getGMT8Time = () => {
+    const now = new Date();
+    const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+    return new Date(utc + (8 * 3600000));
+};
+
+const graduationDate = new Date('2026-05-20T00:00:00');
+const currentDate = getGMT8Time();
 timeTillGrad = Math.round((graduationDate-currentDate)/(1000 * 60 * 60 * 24));
 
 document.getElementById('days').innerText = (String(timeTillGrad) + ' days left...');
