@@ -9,7 +9,7 @@ const optimizeImage = (imgElement) => {
     }
 };
 
-const graduationDate = new Date('2026-05-20T00:00:00');
+const graduationDate = new Date('2026-05-20T23:59:59');
 currentDate = Date.now();
 timeTillGrad = Math.round((graduationDate-currentDate)/(1000 * 60 * 60 * 24));
 
