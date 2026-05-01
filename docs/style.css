@@ -361,6 +361,11 @@ main {
 }
 
 @media screen and (max-width: 768px) {
+    /* Disable animations on mobile for better performance */
+    * {
+        animation: none !important;
+    }
+    
     body {
         display: flex;
         flex-direction: column;
@@ -422,6 +427,11 @@ main {
 }
 
 @media screen and (max-width: 480px) {
+    /* Disable animations on ultra-mobile for better performance */
+    * {
+        animation: none !important;
+    }
+    
     body {
         display: flex;
         flex-direction: column;

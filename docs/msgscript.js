@@ -72,7 +72,7 @@ const displaynamelist = [
     "Trumpeta, Matt Alfonso L.", "Valencia, Brent Andre P.", "Valerio, Varick Vince L.", "Villaflores, John Mike F.", "Villanueva, Edmund Paolo T.",
     "Villarte, Chad S.", "Yano, Dexcy Mea M.", "Yap, Io Mari V.", "Yu, Selene Liana M."
 ]
-const sectionlist = [
+/*const sectionlist = [
     "Class of 2026", "Class of 2026", "Class of 2026", "Class of 2026", "Class of 2026", "Class of 2026", "Class of 2026", "Class of 2026", "Class of 2026",
     "Class of 2026", "Class of 2026", "Class of 2026", "Class of 2026", "Class of 2026", "Class of 2026", "Class of 2026", "Class of 2026", "Class of 2026", "Class of 2026",
     "Class of 2026", "Class of 2026", "Class of 2026", "Class of 2026", "Class of 2026", "Class of 2026", "Class of 2026", "Class of 2026", "Class of 2026", "Class of 2026",
@@ -81,7 +81,7 @@ const sectionlist = [
     "Class of 2026", "Class of 2026", "Class of 2026", "Class of 2026", "Class of 2026", "Class of 2026", "Class of 2026", "Class of 2026", "Class of 2026", "Class of 2026", "Class of 2026", "Class of 2026",
     "Class of 2026", "Class of 2026", "Class of 2026", "Class of 2026", "Class of 2026", "Class of 2026", "Class of 2026", "Class of 2026", "Class of 2026", "Class of 2026",
     "Class of 2026", "Class of 2026", "Class of 2026", "Class of 2026", "Class of 2026", "Class of 2026", "Class of 2026", "Class of 2026", "Class of 2026", "Class of 2026", "Class of 2026"
-]
+]*/
 
 const card_number = document.location.href.split('?')['1'].split('&')[0].split('=')[1];
 
@@ -92,7 +92,7 @@ const name = namelist[card_number - 1];
 img_container.src = "./imgs/" + card_number + ".webp";
 
 name_container.innerHTML = displaynamelist[card_number - 1];
-section_container.innerHTML = sectionlist[card_number - 1];
+section_container.innerHTML = "Class of 2026";
 
 img_container.setAttribute("src", "./msg_imgs/" + card_number + ".webp");
 img_container.setAttribute("alt", namelist[card_number - 1])

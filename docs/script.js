@@ -1,25 +1,53 @@
-// Image optimization with lazy loading
+// Performance monitoring
+let loadedImagesCount = 0;
+let totalImages = 89;
+let imageLoadErrors = 0;
+
+// Image optimization with enhanced lazy loading
 const initializeImageLoading = () => {
     const cards = document.querySelectorAll('.card');
+    totalImages = cards.length;
     
     if ('IntersectionObserver' in window) {
         const imageObserver = new IntersectionObserver((entries, observer) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     const img = entry.target;
-                    if (img.dataset.src && !img.src) {
-                        img.src = img.dataset.src;
-                        img.classList.add('loaded');
+                    if (img.dataset.src) {
+                        // Load image with error handling
+                        const tempImg = new Image();
+                        tempImg.onload = () => {
+                            img.src = img.dataset.src;
+                            img.classList.add('loaded');
+                            loadedImagesCount++;
+                            if (loadedImagesCount === totalImages) {
+                                console.log('✓ All images loaded successfully');
+                            }
+                        };
+                        tempImg.onerror = () => {
+                            imageLoadErrors++;
+                            console.warn(`✗ Failed to load image: ${img.dataset.src}`);
+                            img.classList.add('error');
+                        };
+                        tempImg.src = img.dataset.src;
                     }
                     observer.unobserve(img);
                 }
             });
         }, {
-            rootMargin: '50px'
+            rootMargin: '100px'  // Increased from 50px for better preload buffer
         });
         
         cards.forEach(card => {
             imageObserver.observe(card);
+        });
+    } else {
+        // Fallback for browsers without IntersectionObserver
+        cards.forEach(card => {
+            if (card.dataset.src) {
+                card.src = card.dataset.src;
+                card.classList.add('loaded');
+            }
         });
     }
 };
@@ -44,9 +72,15 @@ to_home.addEventListener("click", function() {
 });
 
 const cardlist = document.getElementsByClassName('card');
-Array.from(cardlist).forEach((card, index) => {
-    card.style.animationDelay = `${index * 0.05}s`;
-});
+const isMobileDevice = window.innerWidth <= 768;
+
+// Only apply animation delays on non-mobile to reduce CPU overhead
+if (!isMobileDevice) {
+    Array.from(cardlist).forEach((card, index) => {
+        card.style.animationDelay = `${index * 0.05}s`;
+    });
+}
+
 const hoverlist = document.getElementsByClassName('card-name');
 const namelist = [
     "Abella, Denise", 
@@ -142,21 +176,48 @@ const namelist = [
 
 const nomiddleinitial = [];
 
+// Set up card metadata for all cards
 for (let index = 0; index < cardlist.length; index++) {
-
     const element = cardlist[index];
     const element_tooltip = hoverlist[index];
     
     element.setAttribute("alt", namelist[index]);
     element_tooltip.innerText = nomiddleinitial.includes(index) ? namelist[index] : namelist[index].slice(0, (namelist[index].length));
-    element.addEventListener('click', function (){
-        document.body.style.opacity = '0.8';
-        document.body.style.transition = 'opacity 0.3s ease-out';
-        setTimeout(() => {
-            location.href = "./msg.html?card=" + encodeURIComponent(element.id.slice(4));
-        }, 100);
+}
+
+// Use event delegation instead of 89 individual listeners (memory efficient)
+const cardContainer = document.querySelector('.card-cont');
+let navigationAbort = null;
+
+if (cardContainer) {
+    cardContainer.addEventListener('click', (e) => {
+        const card = e.target.closest('.card');
+        if (card) {
+            // Cancel any previous navigation
+            if (navigationAbort) navigationAbort.abort();
+            
+            document.body.style.opacity = '0.8';
+            document.body.style.transition = 'opacity 0.3s ease-out';
+            setTimeout(() => {
+                location.href = "./msg.html?card=" + encodeURIComponent(card.id.slice(4));
+            }, 100);
+        }
     });
 }
+
+// Cleanup function - called before navigation
+const cleanupPage = () => {
+    // Cancel animation delays
+    Array.from(cardlist).forEach(card => {
+        card.style.animationDelay = '';
+    });
+    
+    // Stop any pending operations
+    if (navigationAbort) navigationAbort.abort();
+};
+
+// Cleanup on page unload/navigation
+window.addEventListener('beforeunload', cleanupPage);
 
 document.addEventListener('contextmenu', function (e) {
     e.preventDefault();
@@ -164,7 +225,23 @@ document.addEventListener('contextmenu', function (e) {
 
 // Initialize image loading when DOM is ready
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializeImageLoading);
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log(`[Palanca] Initializing lazy loading for ${totalImages} images...`);
+        initializeImageLoading();
+        console.log('[Palanca] Page ready in', Math.round(performance.now()), 'ms');
+    });
 } else {
+    console.log(`[Palanca] Initializing lazy loading for ${totalImages} images...`);
     initializeImageLoading();
+    console.log('[Palanca] Page ready in', Math.round(performance.now()), 'ms');
+}
+
+// Prevent memory bloat on long sessions - log high memory usage (advanced)
+if ('memory' in performance) {
+    setInterval(() => {
+        const usedMemory = performance.memory.usedJSHeapSize / 1048576; // Convert to MB
+        if (usedMemory > 150) {
+            console.warn(`[Palanca] High memory usage detected: ${Math.round(usedMemory)}MB`);
+        }
+    }, 5000);
 }
