@@ -1,3 +1,14 @@
+// Image optimization
+const optimizeImage = (imgElement) => {
+    if (imgElement && imgElement.src) {
+        imgElement.style.maxWidth = '100%';
+        imgElement.style.maxHeight = '100%';
+        imgElement.style.height = 'auto';
+        imgElement.style.width = 'auto';
+        imgElement.style.display = 'block';
+    }
+};
+
 const graduationDate = new Date('2026-05-20T00:00:00');
 currentDate = Date.now();
 timeTillGrad = Math.round((graduationDate-currentDate)/(1000 * 60 * 60 * 24));
@@ -78,6 +89,12 @@ section_container.innerHTML = sectionlist[card_number - 1];
 
 img_container.setAttribute("src", "./msg_imgs/" + card_number + ".webp");
 img_container.setAttribute("alt", namelist[card_number - 1])
+
+// Optimize image display
+optimizeImage(img_container);
+img_container.addEventListener('load', () => {
+    optimizeImage(img_container);
+});
 
 document.title = "Message for " + namelist[card_number - 1];
 

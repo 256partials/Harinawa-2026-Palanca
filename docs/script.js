@@ -1,3 +1,29 @@
+// Image optimization with lazy loading
+const initializeImageLoading = () => {
+    const cards = document.querySelectorAll('.card');
+    
+    if ('IntersectionObserver' in window) {
+        const imageObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    if (img.dataset.src && !img.src) {
+                        img.src = img.dataset.src;
+                        img.classList.add('loaded');
+                    }
+                    observer.unobserve(img);
+                }
+            });
+        }, {
+            rootMargin: '50px'
+        });
+        
+        cards.forEach(card => {
+            imageObserver.observe(card);
+        });
+    }
+};
+
 const graduationDate = new Date('2026-05-20T00:00:00');
 currentDate = Date.now();
 timeTillGrad = Math.ceil((graduationDate-currentDate)/(1000 * 60 * 60 * 24));
@@ -76,7 +102,7 @@ const namelist = [
     "Manuel, Kacey Terrence E.",
     "Mar, Rheagan Matthew G.",
     "Melencion, Arianna Marie B.",
-    "Miranda, Maryloline Faye C.",
+    "Miranda, Maryloine Faye C.",
     "Monternel, Zheanne Gaile D.",
     "Nacario, Xantine Larise Maria M.",
     "Navarrete, Prince Timothy Uriel V.",
@@ -128,3 +154,10 @@ for (let index = 0; index < cardlist.length; index++) {
 document.addEventListener('contextmenu', function (e) {
     e.preventDefault();
 });
+
+// Initialize image loading when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeImageLoading);
+} else {
+    initializeImageLoading();
+}
