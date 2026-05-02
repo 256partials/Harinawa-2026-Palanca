@@ -1,4 +1,6 @@
-// Image optimization
+// Image optimization with mobile awareness
+const isMobileMsgPage = window.innerWidth <= 768;
+
 const optimizeImage = (imgElement) => {
     if (imgElement && imgElement.src) {
         imgElement.style.maxWidth = '100%';
@@ -6,6 +8,11 @@ const optimizeImage = (imgElement) => {
         imgElement.style.height = 'auto';
         imgElement.style.width = 'auto';
         imgElement.style.display = 'block';
+        
+        // Add loading state for mobile
+        if (isMobileMsgPage) {
+            imgElement.style.objectFit = 'cover';
+        }
     }
 };
 
@@ -89,13 +96,13 @@ const name_container = document.getElementById("display-name");
 const section_container = document.getElementById("section");
 const img_container = document.getElementById("settable-img");
 const name = namelist[card_number - 1];
-img_container.src = "./imgs/" + card_number + ".webp";
+
+// Set the message page image (optimized version)
+img_container.setAttribute("src", "./msg_imgs/" + card_number + ".webp");
+img_container.setAttribute("alt", namelist[card_number - 1]);
 
 name_container.innerHTML = displaynamelist[card_number - 1];
 section_container.innerHTML = "Class of 2026";
-
-img_container.setAttribute("src", "./msg_imgs/" + card_number + ".webp");
-img_container.setAttribute("alt", namelist[card_number - 1])
 
 // Optimize image display
 optimizeImage(img_container);
@@ -103,36 +110,68 @@ img_container.addEventListener('load', () => {
     optimizeImage(img_container);
 });
 
+img_container.addEventListener('error', () => {
+    console.warn(`Failed to load image ${card_number}. Attempting fallback...`);
+    img_container.src = "./imgs/" + card_number + ".webp";
+});
+
 document.title = "Message for " + namelist[card_number - 1];
 
 const btn = document.getElementById("submit-btn");
+let isSubmitting = false;
 
 document.getElementById("msg-form").addEventListener("submit", function (e) {
     e.preventDefault();
+    
+    // Prevent double submission
+    if (isSubmitting) return;
+    isSubmitting = true;
+    
     btn.disabled = true;
+    
+    const sender = document.getElementById("name").value || "Anonymous";
+    const message = document.getElementById("msg").value;
+    
+    if (!message.trim()) {
+        alert("Please enter a message.");
+        btn.disabled = false;
+        isSubmitting = false;
+        return;
+    }
+    
+    // Timeout for slow networks
+    const timeoutId = setTimeout(() => {
+        console.error("Message submission timed out");
+        alert("Request timed out. Please try again.");
+        btn.disabled = false;
+        isSubmitting = false;
+    }, 10000);
+    
     fetch("https://script.google.com/macros/s/AKfycbwB4BTEKqm60MRET46LlgLC1AmvgMIKea4S5BTjNqCg6xAAauY2kA2ZU9fxCql3TcE/exec", {
         method: "POST",
         body: JSON.stringify({
-            "receiver":namelist[card_number - 1],
-            "sender":document.getElementById("name").value,  
-            "msg":document.getElementById("msg").value
+            "receiver": namelist[card_number - 1],
+            "sender": sender,  
+            "msg": message
         })
-        }
-    )
+    })
     .then(response => response.json())
     .then(data => {
+        clearTimeout(timeoutId);
         console.log("Success:", data);
         alert("Message sent successfully!");
         document.getElementById("msg").value = "";
         btn.disabled = false;
+        isSubmitting = false;
     })
     .catch(error => {
+        clearTimeout(timeoutId);
         console.error("Error:", error);
-        alert("Oops! Something went wrong.");
+        alert("Oops! Something went wrong. Please try again.");
         btn.disabled = false;
+        isSubmitting = false;
     });
-    
-})
+});
 
 document.addEventListener('contextmenu', function (e) {
     e.preventDefault();

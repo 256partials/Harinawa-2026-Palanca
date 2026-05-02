@@ -38,7 +38,42 @@ body {
     background-color: #000228;
     min-height: 100vh;
     max-width: 100vw;
-    animation: pageIn 0.8s ease-out;
+}
+
+/* Desktop animation */
+@media screen and (min-width: 769px) {
+    body {
+        animation: pageIn 0.8s ease-out;
+    }
+}
+
+/* Image loading states */
+.card[src=""],
+.card:not([src]) {
+    background-color: #1a1a30;
+    background-image: linear-gradient(90deg, #1a1a30 25%, #2a2a4a 50%, #1a1a30 75%);
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    @keyframes shimmer {
+        0% {
+            background-position: 200% 0;
+        }
+        100% {
+            background-position: -200% 0;
+        }
+    }
 }
 
 #navbar {
@@ -183,12 +218,16 @@ main {
     border: 2px #d8d8e6 solid;
 }
 
-.tooltip-container:hover .card-name {
-    visibility: visible;
-}
-
-.tooltip-container:focus-within .card-name {
-    visibility: visible;
+/* Disable hover effects on mobile to prevent layout issues */
+@media screen and (max-width: 768px) {
+    .card:hover {
+        opacity: 100%;
+    }
+    
+    .card:focus {
+        outline: none;
+        border: none;
+    }
 }
 
 .card-cont {
@@ -205,14 +244,30 @@ main {
     -webkit-aspect-ratio: 3/4;
     border-radius: 8px;
     object-fit: cover;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    -webkit-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
     z-index: 0;
     position: relative;
-    animation: cardSlideIn 0.6s ease-out forwards;
     max-width: 100%;
     max-height: 100%;
+    will-change: auto;
+}
+
+/* Desktop animation */
+@media screen and (min-width: 769px) {
+    .card {
+        animation: cardSlideIn 0.6s ease-out forwards;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        -webkit-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+}
+
+/* Mobile: disable animations and transitions for performance */
+@media screen and (max-width: 768px) {
+    .card {
+        animation: none !important;
+        transition: none;
+        -webkit-transition: none;
+    }
 }
 
 
@@ -221,20 +276,49 @@ main {
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: #000000;
+    background-color: transparent;
     border-radius: 8px;
-    margin-bottom: 40px;
+    margin-bottom: 0px;
+}
+
+@media screen and (max-width: 768px) {
+    .tooltip-container {
+        margin-bottom: 0;
+    }
 }
 
 
 .card-name {
-    width: fit-content;
     color: #d8d8e6;
     text-align: center;
-    padding: 8px 5px;
-    line-height: 1em;
+    padding: 12px 8px 0px 8px;
+    line-height: 1.2em;
     margin: 0;
     font-size: 14px;
+    visibility: visible !important;
+    user-select: none;
+    word-break: break-word;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    width: 100%;
+}
+
+@media screen and (max-width: 768px) {
+    .card-name {
+        font-size: 12px;
+        padding: 10px 6px 0px 6px;
+        -webkit-line-clamp: 2;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .card-name {
+        font-size: 11px;
+        padding: 8px 4px 0px 4px;
+        -webkit-line-clamp: 2;
+    }
 }
 
 @media screen and (min-width: 1024px) {
@@ -260,10 +344,10 @@ main {
     }
     .tooltip-container {
         width: 150px;
-        height: 200px;
     }
     .card {
         width: 150px;
+        aspect-ratio: 3/4;
     } 
 }
 
@@ -329,39 +413,21 @@ main {
     .tooltip-container {
         width: 100%;
         max-width: 130px;
-        aspect-ratio: 3/4;
+        aspect-ratio: auto;
         justify-self: center;
     }
     .card {
         width: 100%;
-    }
-    .tooltip-container::after {
-        position: absolute;
-        inset: 0;
-        height: 100%;
-        width: 100%;
-        z-index: 1;
-        pointer-events: none;
-        border-radius: 8px;
-        background: linear-gradient(180deg, #11111900 65%, #000228e6 90%);
-        content: '';
-    }
-    .tooltip-text {
-        position: absolute;
-        bottom: 12px;
-        z-index: 2;
-        font-family: "Crimson Text", "Cambria Math", 'Times New Roman', Times, serif;
-        font-size: 14px;
-        background-color: transparent !important;
-        visibility: visible;
-        color: #d8d8e6;
-        user-select: none;
-        pointer-events: none;
+        aspect-ratio: 3/4;
     }
 }
 
 @media screen and (max-width: 768px) {
     /* Disable animations on mobile for better performance */
+    body {
+        animation: none !important;
+    }
+    
     * {
         animation: none !important;
     }
@@ -417,17 +483,20 @@ main {
 
     .tooltip-container {
         width: 100%;
-        aspect-ratio: 3/4;
         max-width: 110px;
     }
     .card {
         width: 100%;
-        max-width: 100%;
+        aspect-ratio: 3/4;
     }
 }
 
 @media screen and (max-width: 480px) {
     /* Disable animations on ultra-mobile for better performance */
+    body {
+        animation: none !important;
+    }
+    
     * {
         animation: none !important;
     }
