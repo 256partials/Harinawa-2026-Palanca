@@ -1,6 +1,7 @@
 * {
     font-family: "Crimson Text", "Cambria Math", 'Times New Roman', Times, serif;
     margin: 0px;
+    box-sizing: border-box;
 }
 
 .poppins {
@@ -37,7 +38,7 @@ body {
     margin: 0px;
     background-color: #000228;
     min-height: 100vh;
-    max-width: 100vw;
+    overflow-x: hidden;
 }
 
 /* Desktop animation */
@@ -553,7 +554,6 @@ main {
 
     .tooltip-container {
         width: 100%;
-        aspect-ratio: 3/4;
         margin-bottom: 20px;
     }
     .card {
