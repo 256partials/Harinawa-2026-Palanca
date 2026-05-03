@@ -1,99 +1,7 @@
-// Performance monitoring
-let loadedImagesCount = 0;
-let totalImages = 89;
-let imageLoadErrors = 0;
-let imageMemoryCache = new Map();
-const MOBILE_THRESHOLD = 768;
-const isMobile = window.innerWidth <= MOBILE_THRESHOLD;
-
-// Aggressive mobile optimization: only load cards near viewport
-const initializeImageLoading = () => {
-    const cards = document.querySelectorAll('.card');
-    totalImages = cards.length;
-    
-    if ('IntersectionObserver' in window) {
-        // Mobile: minimal buffer (only load visible + 1 above/below)
-        // Desktop: generous buffer for smooth scrolling
-        const rootMargin = isMobile ? '150px' : '300px';
-        
-        const imageObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    loadImageOptimized(entry.target);
-                } else if (isMobile) {
-                    // On mobile, unload images outside viewport to free memory
-                    unloadImageOptimized(entry.target);
-                }
-            });
-        }, {
-            rootMargin: rootMargin
-        });
-        
-        cards.forEach(card => imageObserver.observe(card));
-    } else {
-        // Fallback for browsers without IntersectionObserver
-        cards.forEach(card => {
-            if (card.dataset.src) {
-                card.src = card.dataset.src;
-                card.classList.add('loaded');
-            }
-        });
-    }
-};
-
-// Optimized image loading with memory tracking
-const loadImageOptimized = (img) => {
-    if (img.dataset.loaded === 'true') return; // Already loaded
-    if (!img.dataset.src) return;
-    
-    const src = img.dataset.src;
-    img.src = src;
-    img.dataset.loaded = 'true';
-    img.classList.add('loaded');
-    loadedImagesCount++;
-};
-
-// Free memory by unloading off-screen images on mobile
-const unloadImageOptimized = (img) => {
-    if (!isMobile || img.dataset.loaded !== 'true') return;
-    if (img.src && img.src !== img.dataset.src) return; // Not from dataset
-    
-    img.src = ''; // Free memory
-    img.dataset.loaded = 'false';
-    img.classList.remove('loaded');
-    loadedImagesCount--;
-};
-
-// Function to get current time in GMT+08
-const getGMT8Time = () => {
-    const now = new Date();
-    const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-    return new Date(utc + (8 * 3600000));
-};
-
-const graduationDate = new Date('2026-05-20T00:00:00');
-const currentDate = getGMT8Time();
-timeTillGrad = Math.ceil((graduationDate-currentDate)/(1000 * 60 * 60 * 24));
-
-document.getElementById('days').innerText = (String(timeTillGrad) + ' days left...');
-
-const to_home = document.getElementsByClassName("nav-logo")[0];
-
-to_home.addEventListener("click", function() {
-    window.location = "./";
-});
-
-const cardlist = document.getElementsByClassName('card');
-
-// Skip animations on mobile for better performance
-if (!isMobile) {
-    Array.from(cardlist).forEach((card, index) => {
-        card.style.animationDelay = `${index * 0.05}s`;
-    });
-}
-
-const hoverlist = document.getElementsByClassName('card-name');
-const namelist = [
+const BATCH_SIZE = 20; // change if needed !!!!
+let currentIndex = 0;
+const container = document.getElementById("card-cont");
+const names = [
     "Abella, Denise", 
     "Abellana, Crizelle M.", 
     "Abellana, Kathreen Lara S.", 
@@ -184,97 +92,52 @@ const namelist = [
     "Yap, Io Mari V.",
     "Yu, Selene Liana M."
 ];
-
-const nomiddleinitial = [];
-
-// Set up card metadata for all cards
-for (let index = 0; index < cardlist.length; index++) {
-    const element = cardlist[index];
-    const element_tooltip = hoverlist[index];
-    
-    element.setAttribute("alt", namelist[index]);
-    element_tooltip.innerText = nomiddleinitial.includes(index) ? namelist[index] : namelist[index].slice(0, (namelist[index].length));
-}
-
-// Use event delegation instead of 89 individual listeners (memory efficient)
-const cardContainer = document.querySelector('.card-cont');
-let navigationAbort = null;
-
-if (cardContainer) {
-    cardContainer.addEventListener('click', (e) => {
-        const card = e.target.closest('.card');
-        if (card) {
-            if (navigationAbort) navigationAbort.abort();
-            
-            document.body.style.opacity = '0.8';
-            document.body.style.transition = 'opacity 0.3s ease-out';
-            setTimeout(() => {
-                cleanupPage();
-                location.href = "./msg.html?card=" + encodeURIComponent(card.id.slice(4));
-            }, 100);
-        }
-    });
-}
-
-// Aggressive memory cleanup - especially important for mobile
-const cleanupPage = () => {
-    // Clear animation delays
-    Array.from(cardlist).forEach(card => {
-        card.style.animationDelay = '';
-    });
-    
-    // Unload all images to free memory
-    if (isMobile) {
-        Array.from(cardlist).forEach(card => {
-            card.src = '';
-        });
-    }
-    
-    if (navigationAbort) navigationAbort.abort();
+const getGMT8 = () => {
+    const now = new Date();
+    return new Date(now.getTime() + (8 * 60 * 60 * 1000));
 };
 
-// Cleanup on page unload
-window.addEventListener('beforeunload', cleanupPage);
+const gradDate = new Date('2026-05-20');
+const daysLeft = Math.ceil((gradDate - getGMT8()) / (1000 * 60 * 60 * 24));
 
-// Prevent right-click context menu
-document.addEventListener('contextmenu', function (e) {
-    e.preventDefault();
+document.getElementById("days").innerText = daysLeft + " days left...";
+
+function createCard(index) {
+    const div = document.createElement("div");
+    div.className = "tooltip-container";
+
+    const img = document.createElement("img");
+    img.className = "card";
+    img.src = `./imgs_small/${index + 1}.webp`;
+
+    img.loading = "lazy";
+    img.decoding = "async";
+
+    img.alt = names[index];
+
+    img.addEventListener("click", () => {
+        location.href = `./msg.html?card=${index + 1}`;
+    });
+
+    const name = document.createElement("p");
+    name.className = "card-name poppins";
+    name.innerText = names[index];
+
+    div.appendChild(img);
+    div.appendChild(name);
+
+    return div;
+}
+function loadBatch() {
+    for (let i = 0; i < BATCH_SIZE && currentIndex < names.length; i++) {
+        container.appendChild(createCard(currentIndex));
+        currentIndex++;
+    }
+} loadBatch();
+
+window.addEventListener("scroll", () => {
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 200) {
+        loadBatch();
+    }
 });
-
-// Throttle scroll events to reduce excessive memory checks on mobile
-let scrollThrottle = false;
-const throttleScroll = () => {
-    if (!scrollThrottle && isMobile && 'memory' in performance) {
-        scrollThrottle = true;
-        const usedMemory = performance.memory.usedJSHeapSize / 1048576;
-        if (usedMemory > 100) {
-            console.warn(`[Palanca] Memory: ${Math.round(usedMemory)}MB - Forcing garbage collection`);
-            // Unload images outside viewport to help GC
-            Array.from(cardlist).forEach(card => {
-                const rect = card.getBoundingClientRect();
-                if (rect.top > window.innerHeight + 200 || rect.bottom < -200) {
-                    card.src = '';
-                    card.dataset.loaded = 'false';
-                }
-            });
-        }
-        setTimeout(() => { scrollThrottle = false; }, 1000);
-    }
-};
-
-if (isMobile) {
-    window.addEventListener('scroll', throttleScroll, { passive: true });
-}
-
-// Initialize image loading when DOM is ready
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-        console.log(`[Palanca] Mobile: ${isMobile} | Loading ${totalImages} images...`);
-        initializeImageLoading();
-        console.log('[Palanca] Ready in', Math.round(performance.now()), 'ms');
-    });
-} else {
-    console.log(`[Palanca] Mobile: ${isMobile} | Loading ${totalImages} images...`);
-    initializeImageLoading();
-    console.log('[Palanca] Ready in', Math.round(performance.now()), 'ms');
-}
+document.querySelector(".nav-logo").onclick = () => location.href = "./";

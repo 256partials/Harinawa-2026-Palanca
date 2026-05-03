@@ -1,0 +1,20 @@
+{
+  "name": "harinawa-2026-palanca",
+  "version": "1.0.0",
+  "description": "",
+  "main": "apps_script_data.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "fs": "^0.0.1-security",
+    "path": "^0.12.7",
+    "sharp": "^0.34.5"
+  }
+}
