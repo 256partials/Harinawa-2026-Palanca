@@ -294,6 +294,7 @@ main {
     padding: 12px 8px 0px 8px;
     line-height: 1.2em;
     margin: 0;
+    margin-bottom:20px;
     font-size: 14px;
     visibility: visible !important;
     user-select: none;
