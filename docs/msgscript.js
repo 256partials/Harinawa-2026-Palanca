@@ -2,7 +2,7 @@ const params = new URLSearchParams(location.search);
 const card = params.get("card");
 
 const namelist = [
-    "Abella, Denise", "Abellana, Crizelle M.", "Abellana, Kathreen Lara S.", "Abendan, Emmanuel D.", "Ada, Dominic L.",
+    "Abella, Denise A.", "Abellana, Crizelle M.", "Abellana, Kathreen Lara S.", "Abendan, Emmanuel D.", "Ada, Dominic L.",
     "Adiong, Karlo U.", "Alanano, Ernest Claude A.", "Alcantara, Zy Jrehd Rhoven G.", "Alemania, Neil Joseph K.", "Alvarez, Jacob Johnson B.",
     "Arbon, Jianna Angela N.", "Arellano, Godwin El Seihgfredd R.", "Auza, Jeremiah E.", "Ayuban, Niño Zane Gabriel J.", "Baes, Daven L.",
     "Bangay, Angel Mae P.", "Baring, Vince Harris C.", "Batucan, Rigel Neron A.", "Bellester, Boien B.", "Biñan, Jon Nathaniel J.",

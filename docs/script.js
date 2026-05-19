@@ -100,7 +100,7 @@ const getGMT8 = () => {
 const gradDate = new Date('2026-05-20');
 const daysLeft = Math.ceil((gradDate - getGMT8()) / (1000 * 60 * 60 * 24));
 
-document.getElementById("days").innerText = daysLeft + " days left...";
+document.getElementById("days").innerText = "Graduation Day!";
 
 function createCard(index) {
     const div = document.createElement("div");
