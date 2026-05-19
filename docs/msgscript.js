@@ -51,7 +51,7 @@ document.getElementById("msg-form").addEventListener("submit", async (e) => {
     submitting = true;
 
     try {
-        const res = await fetch("https://script.google.com/macros/s/AKfycbwB4BTEKqm60MRET46LlgLC1AmvgMIKea4S5BTjNqCg6xAAauY2kA2ZU9fxCql3TcE/exec", {
+        const res = await fetch("https://script.google.com/macros/s/AKfycbydy8fxkYWlGYcbIWM3n53_olZpERwbPMlDH3EPiQwzlowly3-xZHrHPrPCNeOWEA/exec", {
             method: "POST",
             body: JSON.stringify({
                 receiver: namelist[card - 1],
