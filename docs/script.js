@@ -270,7 +270,8 @@ function createCard(index) {
     img.alt = names[index];
 
     img.addEventListener("click", () => {
-        location.href = `msg.html?name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&img=${encodeURIComponent(img)}`;
+        const person = graduates[index]; 
+        location.href = `msg.html?name=${encodeURIComponent(person.name)}&email=${encodeURIComponent(person.email)}&img=${encodeURIComponent(img.src)}`;
     });
 
     const name = document.createElement("p");
